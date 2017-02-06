@@ -1,0 +1,11 @@
+.SchoolPage-input {
+  border: none;
+  border-bottom: 1px solid gray;
+  box-sizing: border-box;
+  font-size: 2rem;
+  height: 48px;
+  line-height: 48px;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+}

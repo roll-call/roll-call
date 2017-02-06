@@ -1,0 +1,1 @@
+export default s => String.fromCharCode(s.charCodeAt(0) - 32) + s.slice(1);

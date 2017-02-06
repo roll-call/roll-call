@@ -1,0 +1,27 @@
+.Tabs {
+  overflow-x: scroll;
+}
+
+.Tabs::-webkit-scrollbar {
+  -webkit-appearance: none;
+  display: none;
+}
+
+.Tabs-tab {
+  border-bottom: 4px solid transparent;
+  opacity: 0.5;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.Tabs-tab.is-selected {
+  border-bottom-color: white;
+  opacity: 1;
+}
+
+@media (max-width: 460px) {
+  .Tabs {
+    justify-content: flex-start !important;
+    -webkit-justify-content: flex-start !important;
+  }
+}

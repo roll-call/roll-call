@@ -1,0 +1,12 @@
+{
+  "plugins": [
+    "syntax-jsx",
+    "xvdom",
+    "transform-object-rest-spread",
+    ["transform-object-rest-spread", { "useBuiltIns": true }],
+    "transform-node-env-inline"
+  ],
+  "presets": [
+    "es2015-rollup"
+  ]
+}

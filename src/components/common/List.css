@@ -1,0 +1,33 @@
+.List-item {
+  display: block;
+  border-bottom: 1px solid #EEE;
+  padding: 20px 16px;
+  cursor: pointer;
+  position: relative;
+}
+
+.List-item.List-item--header {
+  border-top: 1px solid #EEE;
+  padding-bottom: 8px;
+  cursor: default;
+  color: hsl(192, 0%, 55%) !important;
+}
+
+.List-item.List-item--noDivider,
+.List-item.List-item--header {
+  border-bottom: 0;
+}
+
+.List-item.List-item--noDivider {
+  padding: 16px;
+}
+
+.List-item.List-item--noPadding {
+  padding: 0;
+}
+
+.List-item.List-item--selection {
+  background-color: #f3faff;
+  border-top: 1px solid #e0f1ff;
+  border-bottom: none;
+}
