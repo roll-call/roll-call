@@ -85,7 +85,7 @@ App.state = {
           const firstKey = Object.keys(user.schools)[0];
           const hash = window.location.hash;
           if(!hash || hash === '#') window.location.hash = `#schools/${firstKey}/school`;
-          bindSend('onUser')(User.current());
+          bindSend('onUser')(user);
         })
     });
     
