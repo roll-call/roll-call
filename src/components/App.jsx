@@ -33,7 +33,7 @@ function toggleSignIn() {
 }
 
 const App = ({ props: { user }, state: { page, id, tab } }) => (
-  <body>
+  <body className='App'>
     {!user &&
       <button onclick={toggleSignIn}>{user ? 'Sign out' : 'Sign in'}</button>
     }

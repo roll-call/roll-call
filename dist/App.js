@@ -1330,9 +1330,11 @@ var _xvdomSpec8$1 = {
         _n2,
         _n3;
 
+    _n.className = 'l-padding-t4';
     inst.b = _xvdomCreateDynamic$5(false, _n, inst.a);
     _n2 = _xvdomEl$6('div');
-    _n2.className = 'layout horizontal center-justify l-margin-t4';
+    _n2.className = 'layout horizontal l-padding-t2';
+    _n2.style.cssText = 'padding-left: 22px';
     _n3 = _xvdomEl$6('a');
     _n3.className = 'SeatingTab-addRow';
     inst.d = _n3;
@@ -1400,7 +1402,7 @@ var _xvdomSpec6$1 = {
 
     inst.b = _xvdomCreateDynamic$5(false, _n, inst.a);
     _n2 = _xvdomEl$6('div');
-    _n2.className = 'SeatingRow layout horizontal center-justified';
+    _n2.className = 'SeatingRow layout horizontal';
     _n3 = _xvdomEl$6('div');
     _n3.className = 'SeatingRow-controls layout vertical around-justified';
     _n4 = _xvdomEl$6('a');
@@ -2130,6 +2132,7 @@ var _xvdomSpec3 = {
   c: function c(inst) {
     var _n = _xvdomEl('body');
 
+    _n.className = 'App';
     inst.b = _xvdomCreateDynamic(false, _n, inst.a);
     inst.d = _xvdomCreateDynamic(false, _n, inst.c);
     return _n;

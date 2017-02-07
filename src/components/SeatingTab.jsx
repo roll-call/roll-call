@@ -27,7 +27,7 @@ const AssignSeat = dataComponent(
 const SeatingRow = ({ props: { id, row, onAdd, onRemove, onAssign }, state: {seatIndex}, bindSend }) => (
   <div>
     {seatIndex != null && <AssignSeat id={id} seatIndex={seatIndex} onAssign={onAssign} onClose={bindSend('onClose')} />}
-    <div className='SeatingRow layout horizontal center-justified'>
+    <div className='SeatingRow layout horizontal'>
       <div className='SeatingRow-controls layout vertical around-justified'>
         <a className='SeatingRow-controls-control' onclick={onAdd}>+</a>
         <a className='SeatingRow-controls-control' onclick={onRemove}>-</a>
@@ -63,7 +63,7 @@ export default dataComponent(
   SeatingModel,
   'query',
   ({ props: { id }, state, bindSend }) =>
-    <div>
+    <div className='l-padding-t4'>
       {!state ? [] : state.map((row, rowNum) => (
         <SeatingRow
           key={row.join('--')}
@@ -95,7 +95,7 @@ export default dataComponent(
           }}
         />
       ))}
-      <div className="layout horizontal center-justify l-margin-t4">
+      <div className="layout horizontal l-padding-t2" style="padding-left: 22px">
         <a
           className='SeatingTab-addRow'
           onclick={() => {
