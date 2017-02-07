@@ -6,7 +6,10 @@ export default (modelOrGetter, type, Component) => {
   };
   Component.state = {
     onInit,
-    onProps: onInit,
+    onProps: component => {
+      onInit(component);
+      return component.state;
+    },
     onLoadModel: (component, model) => model,
     refresh: component => {
       onInit(component);

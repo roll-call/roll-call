@@ -901,4 +901,33 @@ pre {
   border: 2px solid #CCC;
   text-align: center;
   width: 88px;
+}.Rollcall-date {
+  background: white;
+  border-radius: 6px;
+  display: inline-block;
+  width: 200px;
+  padding: 12px;
+  overflow: hidden;
+  margin: 8px 0 16px 0;
+  border: 2px solid #DDD;
+}
+.Rollcall-dateInc {
+  padding: 0 10px;
+  color: #AAA;
+  font-weight: 700;
+}
+
+.is-here {
+  background: #AD8;
+  border-color: #8A6;
+}
+
+.is-absent {
+  background: #DDD;
+  border-color: #CCC;
+}
+
+.is-no-instrument {
+  background: #F88;
+  border-color: #D55;
 }

@@ -8,6 +8,7 @@ import Tabs       from './common/Tabs.jsx';
 import AppToolbar from './AppToolbar.jsx';
 import StudentsTab from './StudentsTab.jsx';
 import SeatingTab from './SeatingTab.jsx';
+import RollcallTab from './RollcallTab.jsx';
 
 const TABS = {
   school:   { title: 'School' },
@@ -59,9 +60,10 @@ const SchoolTab = dataComponent(SchoolModel,
 );
 
 const renderTab = (id, tab) => (
-  tab === 'school' ? <SchoolTab id={id} />
+  tab === 'school'   ? <SchoolTab id={id} />
 : tab === 'students' ? <StudentsTab id={id} />
-: tab === 'seating' ? <SeatingTab id={id} />
+: tab === 'seating'  ? <SeatingTab id={id} />
+: tab === 'rollcall' ? <RollcallTab id={id} />
 : null
 );
 

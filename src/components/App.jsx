@@ -32,12 +32,16 @@ function toggleSignIn() {
     .catch(error => console.error(error));
 }
 
-const App = ({ props: { user }, state: { page, id, tab } }) => (
+const App = ({ state: { user, page, id, tab } }) => (
   <body className='App'>
     {!user &&
-      <button onclick={toggleSignIn}>{user ? 'Sign out' : 'Sign in'}</button>
+      <div style='position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;' className='layout horizontal center-center'>
+        <a onclick={toggleSignIn} className='l-padding-4' style='background: #CCC; border-radius: 6px;'>
+          {user ? 'Sign out' : 'Sign in'}
+        </a>
+      </div>
     }
-    {!!page && !!id &&
+    {user && !!page && !!id &&
       <SchoolPage user={user} page={page} id={id} tab={tab} />
     }
   </body>
@@ -46,19 +50,8 @@ const App = ({ props: { user }, state: { page, id, tab } }) => (
 const stateFromHash = ({ state }) => {
   const hash = window.location.hash.slice(1);
   const [page, id, tab] = hash.split('/');
-  return {page, id, tab};
+  return {...state, page, id, tab};
 };
-
-App.state = {
-  onInit: ({ bindSend }) => {
-    window.onhashchange = bindSend('handleHashChange');
-    return stateFromHash({});
-  },
-  onProps: stateFromHash,
-  handleHashChange: stateFromHash
-}
-
-const renderApp = user => <App user={user} />;
 
 firebase.initializeApp({
   apiKey: "AIzaSyByU0ftUO7ECBLGGCb4awfe-u0ITxt0NVw",
@@ -68,34 +61,41 @@ firebase.initializeApp({
   messagingSenderId: "115688293946"
 });
 
-document.body = xvdom.render(renderApp(User.current()));
+App.state = {
+  onInit: ({ bindSend }) => {
+    firebase.auth().onAuthStateChanged(authUser => {
+      if(!authUser) return bindSend('onUser')(authUser);
 
-firebase.auth().onAuthStateChanged(authUser => {
-  if(!authUser) return xvdom.rerender(document.body, renderApp(null, null));
+      // Get or create user information
+      User.get(authUser.uid)
+        .catch(() =>
+          User.save({
+            // Couldn't find existing user w/authId, so create a new User
+            id: authUser.uid,
+            displayName: authUser.displayName,
+            schools: { 
+              _init: {
+                name: 'School #1'
+              }
+            },
+          })
+        )
+        .then(user => {
+          User.setCurrent(user.id);
+          const firstKey = Object.keys(user.schools)[0];
+          const hash = window.location.hash;
+          if(!hash || hash === '#') window.location.hash = `#schools/${firstKey}/school`;
+          bindSend('onUser')(User.current());
+        })
+    });
+    
+    window.onhashchange = bindSend('handleHashChange');
+    return stateFromHash({ user: User.current() });
+  },
+  onUser: ({ state }, user) => {
+    return { ...state, user };
+  },
+  handleHashChange: stateFromHash
+}
 
-  // Get or create user information
-  User.get(authUser.uid)
-    .catch(() =>
-      User.save({
-        // Couldn't find existing user w/authId, so create a new User
-        id: authUser.uid,
-        displayName: authUser.displayName,
-        schools: { 
-          _init: {
-            name: 'School #1',
-            terms: [
-              '08-01-2016,11-31-2016',
-              '11-31-2016,01-31-2017',
-              '02-01-2017,05-31-2017'
-            ]
-          }
-        },
-      })
-    )
-    .then(user => {
-      User.setCurrent(user.id);
-      const firstKey = Object.keys(user.schools)[0];
-      const hash = window.location.hash;
-      if(!hash || hash === '#') window.location.hash = `#schools/${firstKey}/school`
-    })
-});
+document.body = xvdom.render(<App />);

@@ -749,6 +749,28 @@ var slicedToArray = function () {
   };
 }();
 
+
+
+
+
+
+
+
+
+
+
+
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
 var LAST_LOGIN_ID_STORAGE_KEY = 'rc:lastLoggedInUserId';
 var fb = function fb(id) {
   return firebase.database().ref('users/' + id);
@@ -811,7 +833,10 @@ var dataComponent = (function (modelOrGetter, type, Component) {
   };
   Component.state = {
     onInit: onInit,
-    onProps: onInit,
+    onProps: function onProps(component) {
+      onInit(component);
+      return component.state;
+    },
     onLoadModel: function onLoadModel(component, model) {
       return model;
     },
@@ -1725,12 +1750,438 @@ var SeatingTab = dataComponent(Seating, 'query', function (_ref4) {
   };
 });
 
+var pad = function pad(num) {
+  return '' + (num < 10 ? '0' : '') + num;
+};
+var dateString = function dateString(date) {
+  return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate() + 1);
+};
+var rollcallRef = function rollcallRef(id, date) {
+  return firebase.database().ref('users/' + User.getCurrentId() + '/schools/' + id + '/rollcall/' + dateString(date));
+};
+
+var RollcallModel = {
+  query: function query(_ref) {
+    var id = _ref.id,
+        date = _ref.date;
+
+    var userId = User.getCurrentId;
+    if (!userId) {
+      console.log('No user!');
+      return Promise.resolve([]);
+    }
+    return new Promise(function (resolve) {
+      rollcallRef(id, date).once('value', function (data) {
+        resolve(data.val() || []);
+      });
+    });
+  },
+
+  update: function update(id, date, rollcall) {
+    return rollcallRef(id, date).set(rollcall);
+  }
+};
+
+var _xvdomCreateComponent$5 = xvdom.createComponent;
+var _xvdomCreateDynamic$6 = xvdom.createDynamic;
+var _xvdomEl$7 = xvdom.el;
+var _xvdomUpdateComponent$5 = xvdom.updateComponent;
+var _xvdomUpdateDynamic$6 = xvdom.updateDynamic;
+var _xvdomSpec7$2 = {
+  c: function c(inst) {
+    var _n = _xvdomEl$7('div'),
+        _n2,
+        _n3,
+        _n4;
+
+    _n2 = _xvdomEl$7('div');
+    _n2.className = 'layout horizontal center-center l-padding-t4';
+    _n3 = _xvdomEl$7('div');
+    _n3.className = 'Rollcall-date layout horizontal center-center';
+    _n4 = _xvdomEl$7('a');
+    _n4.className = 'Rollcall-dateInc';
+    inst.b = _n4;
+    _n4.onclick = inst.a;
+
+    _n4.appendChild(document.createTextNode(('<') || ''));
+
+    _n3.appendChild(_n4);
+
+    _n4 = _xvdomEl$7('div');
+    _n4.className = 'flex t-center';
+    inst.d = _xvdomCreateDynamic$6(false, _n4, inst.c);
+
+    _n4.appendChild(document.createTextNode((' - ') || ''));
+
+    inst.f = _xvdomCreateDynamic$6(false, _n4, inst.e);
+
+    _n4.appendChild(document.createTextNode((' - ') || ''));
+
+    inst.h = _xvdomCreateDynamic$6(false, _n4, inst.g);
+
+    _n3.appendChild(_n4);
+
+    _n4 = _xvdomEl$7('a');
+    _n4.className = 'Rollcall-dateInc';
+    inst.j = _n4;
+    _n4.onclick = inst.i;
+
+    _n4.appendChild(document.createTextNode(('>') || ''));
+
+    _n3.appendChild(_n4);
+
+    _n2.appendChild(_n3);
+
+    _n.appendChild(_n2);
+
+    _n2 = (inst.m = _xvdomCreateComponent$5(Rollcall, Rollcall.state, {
+      id: inst.k,
+      date: inst.l
+    }, inst)).$n;
+
+    _n.appendChild(_n2);
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+    v = inst.a;
+
+    if (v !== pInst.a) {
+      pInst.b.onclick = v;
+      pInst.a = v;
+    }
+
+    if (inst.c !== pInst.c) {
+      pInst.d = _xvdomUpdateDynamic$6(false, pInst.c, pInst.c = inst.c, pInst.d);
+    }
+
+    if (inst.e !== pInst.e) {
+      pInst.f = _xvdomUpdateDynamic$6(false, pInst.e, pInst.e = inst.e, pInst.f);
+    }
+
+    if (inst.g !== pInst.g) {
+      pInst.h = _xvdomUpdateDynamic$6(false, pInst.g, pInst.g = inst.g, pInst.h);
+    }
+
+    v = inst.i;
+
+    if (v !== pInst.i) {
+      pInst.j.onclick = v;
+      pInst.i = v;
+    }
+
+    if (inst.k !== pInst.k || inst.l !== pInst.l) {
+      pInst.m = _xvdomUpdateComponent$5(Rollcall, Rollcall.state, {
+        id: pInst.k = inst.k,
+        date: pInst.l = inst.l
+      }, pInst.m);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec6$2 = {
+  c: function c(inst) {
+    var _n = _xvdomEl$7('div');
+
+    inst.b = _xvdomCreateDynamic$6(true, _n, inst.a);
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.a !== pInst.a) {
+      pInst.b = _xvdomUpdateDynamic$6(true, pInst.a, pInst.a = inst.a, pInst.b);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec5$3 = {
+  c: function c(inst) {
+    var _n = (inst.d = _xvdomCreateComponent$5(RollcallWithSeating, RollcallWithSeating.state, {
+      id: inst.a,
+      rollcall: inst.b,
+      onToggleStatus: inst.c
+    }, inst)).$n;
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.b !== pInst.b || inst.a !== pInst.a || inst.c !== pInst.c) {
+      pInst.d = _xvdomUpdateComponent$5(RollcallWithSeating, RollcallWithSeating.state, {
+        id: pInst.a = inst.a,
+        rollcall: pInst.b = inst.b,
+        onToggleStatus: pInst.c = inst.c
+      }, pInst.d);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec4$4 = {
+  c: function c(inst) {
+    var _n = _xvdomEl$7('div');
+
+    inst.b = _xvdomCreateDynamic$6(true, _n, inst.a);
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.a !== pInst.a) {
+      pInst.b = _xvdomUpdateDynamic$6(true, pInst.a, pInst.a = inst.a, pInst.b);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec3$4 = {
+  c: function c(inst) {
+    var _n = (inst.f = _xvdomCreateComponent$5(SeatingRow$1, SeatingRow$1.state, {
+      id: inst.a,
+      row: inst.b,
+      rowNum: inst.c,
+      rollcall: inst.d,
+      onToggleStatus: inst.e
+    }, inst)).$n;
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.d !== pInst.d || inst.c !== pInst.c || inst.b !== pInst.b || inst.a !== pInst.a || inst.e !== pInst.e) {
+      pInst.f = _xvdomUpdateComponent$5(SeatingRow$1, SeatingRow$1.state, {
+        id: pInst.a = inst.a,
+        row: pInst.b = inst.b,
+        rowNum: pInst.c = inst.c,
+        rollcall: pInst.d = inst.d,
+        onToggleStatus: pInst.e = inst.e
+      }, pInst.f);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec2$5 = {
+  c: function c(inst) {
+    var _n = _xvdomEl$7('div'),
+        _n2;
+
+    _n.className = 'l-padding-l4';
+    _n2 = _xvdomEl$7('div');
+    _n2.className = 'SeatingRow layout horizontal';
+    inst.b = _xvdomCreateDynamic$6(true, _n2, inst.a);
+
+    _n.appendChild(_n2);
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.a !== pInst.a) {
+      pInst.b = _xvdomUpdateDynamic$6(true, pInst.a, pInst.a = inst.a, pInst.b);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec$7 = {
+  c: function c(inst) {
+    var _n = _xvdomEl$7('a'),
+        _n2;
+
+    inst.b = _n;
+    _n.className = inst.a;
+    _n.onclick = inst.c;
+    _n2 = _xvdomEl$7('div');
+    inst.e = _xvdomCreateDynamic$6(true, _n2, inst.d);
+
+    _n.appendChild(_n2);
+
+    _n2 = _xvdomEl$7('div');
+    _n2.className = 'flex layout vertical center-center';
+    inst.g = _xvdomCreateDynamic$6(true, _n2, inst.f);
+
+    _n.appendChild(_n2);
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+    v = inst.a;
+
+    if (v !== pInst.a) {
+      pInst.b.className = v;
+      pInst.a = v;
+    }
+
+    v = inst.c;
+
+    if (v !== pInst.c) {
+      pInst.b.onclick = v;
+      pInst.c = v;
+    }
+
+    if (inst.d !== pInst.d) {
+      pInst.e = _xvdomUpdateDynamic$6(true, pInst.d, pInst.d = inst.d, pInst.e);
+    }
+
+    if (inst.f !== pInst.f) {
+      pInst.g = _xvdomUpdateDynamic$6(true, pInst.f, pInst.f = inst.f, pInst.g);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var STATUSES = ['Here', 'Absent', 'No Instrument'];
+
+var getRecord = function getRecord(student, rollcall) {
+  return rollcall.find(function (_ref) {
+    var _ref2 = slicedToArray(_ref, 1),
+        recordStudent = _ref2[0];
+
+    return recordStudent === student;
+  });
+};
+
+var getStudentStatus = function getStudentStatus(student, rollcall) {
+  var record = getRecord(student, rollcall);
+  return record ? record[1] : '';
+};
+
+var getStudentStatusClass = function getStudentStatusClass(student, rollcall) {
+  var status = getStudentStatus(student, rollcall);
+  return status === 'Here' ? 'is-here' : status === 'Absent' ? 'is-absent' : status === 'No Instrument' ? 'is-no-instrument' : '';
+};
+
+var SeatingRow$1 = function SeatingRow$1(_ref3) {
+  var row = _ref3.row,
+      rollcall = _ref3.rollcall,
+      onToggleStatus = _ref3.onToggleStatus;
+  return {
+    $s: _xvdomSpec2$5,
+    a: row.map(function (seat, seatIndex) {
+      return {
+        $s: _xvdomSpec$7,
+        a: 'SeatingRow-seat layout vertical center-center ' + (seat === 'EMPTY' ? 'SeatingRow-seat--empty' : '') + ' ' + getStudentStatusClass(seat, rollcall),
+        c: seat === 'EMPTY' ? null : function () {
+          return onToggleStatus(seat);
+        },
+        d: seat === 'EMPTY' ? '' : seat,
+        f: getStudentStatus(seat, rollcall),
+        key: seatIndex
+      };
+    })
+  };
+};
+
+var RollcallWithSeating = dataComponent(Seating, 'query', function (_ref4) {
+  var _ref4$props = _ref4.props,
+      id = _ref4$props.id,
+      rollcall = _ref4$props.rollcall,
+      onToggleStatus = _ref4$props.onToggleStatus,
+      state = _ref4.state,
+      bindSend = _ref4.bindSend;
+  return {
+    $s: _xvdomSpec4$4,
+    a: !state ? [] : state.map(function (row, rowNum) {
+      return {
+        $s: _xvdomSpec3$4,
+        a: id,
+        b: row,
+        c: rowNum,
+        d: rollcall,
+        e: onToggleStatus,
+        key: row.join('--')
+      };
+    })
+  };
+});
+
+var Rollcall = dataComponent(RollcallModel, 'query', function (_ref5) {
+  var id = _ref5.props.id,
+      state = _ref5.state,
+      bindSend = _ref5.bindSend;
+  return {
+    $s: _xvdomSpec6$2,
+    a: state && {
+      $s: _xvdomSpec5$3,
+      a: id,
+      b: state,
+      c: bindSend('onToggleStatus')
+    }
+  };
+});
+
+var nextStatus = function nextStatus(status) {
+  return STATUSES[(STATUSES.indexOf(status) + 1) % STATUSES.length];
+};
+
+Rollcall.state.onToggleStatus = function (_ref6, student) {
+  var _ref6$props = _ref6.props,
+      id = _ref6$props.id,
+      date = _ref6$props.date,
+      state = _ref6.state;
+
+  if (!student) return;
+  var record = state.find(function (_ref7) {
+    var _ref8 = slicedToArray(_ref7, 1),
+        recordStudent = _ref8[0];
+
+    return recordStudent === student;
+  });
+  if (!record) {
+    record = [student, STATUSES[0]];
+    state.push(record);
+  } else {
+    record[1] = nextStatus(record[1]);
+  }
+  RollcallModel.update(id, date, state);
+  return [].concat(toConsumableArray(state));
+};
+
+var RollcallTab = function RollcallTab(_ref9) {
+  var id = _ref9.props.id,
+      state = _ref9.state,
+      bindSend = _ref9.bindSend;
+  return {
+    $s: _xvdomSpec7$2,
+    a: bindSend('decDate'),
+    c: state.getMonth() + 1,
+    e: state.getDate() + 1,
+    g: state.getFullYear(),
+    i: bindSend('incDate'),
+    k: id,
+    l: state
+  };
+};
+
+var onInit$2 = function onInit$2() {
+  return new Date();
+};
+
+var addDate = function addDate(date, numDays) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + numDays);
+};
+
+RollcallTab.state = {
+  onInit: onInit$2,
+  onProps: onInit$2,
+  decDate: function decDate(_ref10) {
+    var state = _ref10.state;
+    return addDate(state, -1);
+  },
+  incDate: function incDate(_ref11) {
+    var state = _ref11.state;
+    return addDate(state, 1);
+  }
+};
+
 var _xvdomCreateComponent$1 = xvdom.createComponent;
 var _xvdomCreateDynamic$2 = xvdom.createDynamic;
 var _xvdomEl$3 = xvdom.el;
 var _xvdomUpdateComponent$1 = xvdom.updateComponent;
 var _xvdomUpdateDynamic$2 = xvdom.updateDynamic;
-var _xvdomSpec12 = {
+var _xvdomSpec13 = {
   c: function c(inst) {
     var _n = (inst.e = _xvdomCreateComponent$1(School, School.state, {
       user: inst.a,
@@ -1755,7 +2206,7 @@ var _xvdomSpec12 = {
   },
   r: xvdom.DEADPOOL
 };
-var _xvdomSpec11 = {
+var _xvdomSpec12 = {
   c: function c(inst) {
     var _n = _xvdomCreateComponent$1(SchoolCreate, SchoolCreate.state, null, inst).$n;
 
@@ -1764,7 +2215,7 @@ var _xvdomSpec11 = {
   u: function u() {},
   r: xvdom.DEADPOOL
 };
-var _xvdomSpec10 = {
+var _xvdomSpec11 = {
   c: function c(inst) {
     var _n = (inst.d = _xvdomCreateComponent$1(Tabs, Tabs.state, {
       hrefPrefix: inst.a,
@@ -1787,7 +2238,7 @@ var _xvdomSpec10 = {
   },
   r: xvdom.DEADPOOL
 };
-var _xvdomSpec9 = {
+var _xvdomSpec10 = {
   c: function c(inst) {
     var _n = _xvdomCreateComponent$1(Icon, Icon.state, {
       className: 'c-white l-padding-h4',
@@ -1800,7 +2251,7 @@ var _xvdomSpec9 = {
   u: function u() {},
   r: xvdom.DEADPOOL
 };
-var _xvdomSpec8 = {
+var _xvdomSpec9 = {
   c: function c(inst) {
     var _n = _xvdomEl$3('div'),
         _n2;
@@ -1829,6 +2280,25 @@ var _xvdomSpec8 = {
 
     if (inst.e !== pInst.e) {
       pInst.f = _xvdomUpdateDynamic$2(false, pInst.e, pInst.e = inst.e, pInst.f);
+    }
+  },
+  r: xvdom.DEADPOOL
+};
+var _xvdomSpec8 = {
+  c: function c(inst) {
+    var _n = (inst.b = _xvdomCreateComponent$1(RollcallTab, RollcallTab.state, {
+      id: inst.a
+    }, inst)).$n;
+
+    return _n;
+  },
+  u: function u(inst, pInst) {
+    var v;
+
+    if (inst.a !== pInst.a) {
+      pInst.b = _xvdomUpdateComponent$1(RollcallTab, RollcallTab.state, {
+        id: pInst.a = inst.a
+      }, pInst.b);
     }
   },
   r: xvdom.DEADPOOL
@@ -2060,6 +2530,9 @@ var renderTab$1 = function renderTab$1(id, tab) {
   } : tab === 'seating' ? {
     $s: _xvdomSpec7,
     a: id
+  } : tab === 'rollcall' ? {
+    $s: _xvdomSpec8,
+    a: id
   } : null;
 };
 
@@ -2073,12 +2546,12 @@ var School = dataComponent(SchoolModel, 'get', function (_ref6) {
 
   var school = state || {};
   return {
-    $s: _xvdomSpec8,
+    $s: _xvdomSpec9,
     a: {
-      $s: _xvdomSpec9
+      $s: _xvdomSpec10
     },
     b: {
-      $s: _xvdomSpec10,
+      $s: _xvdomSpec11,
       a: '#schools/' + id + '/',
       b: tab,
       c: TABS
@@ -2094,9 +2567,9 @@ var SchoolPage = (function (_ref7) {
       id = _ref7.id,
       tab = _ref7.tab;
   return id === 'new' ? {
-    $s: _xvdomSpec11
+    $s: _xvdomSpec12
   } : {
-    $s: _xvdomSpec12,
+    $s: _xvdomSpec13,
     a: user,
     b: page,
     c: id,
@@ -2111,21 +2584,11 @@ var _xvdomUpdateComponent = xvdom.updateComponent;
 var _xvdomUpdateDynamic = xvdom.updateDynamic;
 var _xvdomSpec4 = {
   c: function c(inst) {
-    var _n = (inst.b = _xvdomCreateComponent(App, App.state, {
-      user: inst.a
-    }, inst)).$n;
+    var _n = _xvdomCreateComponent(App, App.state, null, inst).$n;
 
     return _n;
   },
-  u: function u(inst, pInst) {
-    var v;
-
-    if (inst.a !== pInst.a) {
-      pInst.b = _xvdomUpdateComponent(App, App.state, {
-        user: pInst.a = inst.a
-      }, pInst.b);
-    }
-  },
+  u: function u() {},
   r: xvdom.DEADPOOL
 };
 var _xvdomSpec3 = {
@@ -2177,11 +2640,20 @@ var _xvdomSpec2 = {
 };
 var _xvdomSpec = {
   c: function c(inst) {
-    var _n = _xvdomEl('button');
+    var _n = _xvdomEl('div'),
+        _n2;
 
-    inst.b = _n;
-    _n.onclick = inst.a;
-    inst.d = _xvdomCreateDynamic(true, _n, inst.c);
+    _n.style.cssText = 'position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;';
+    _n.className = 'layout horizontal center-center';
+    _n2 = _xvdomEl('a');
+    inst.b = _n2;
+    _n2.onclick = inst.a;
+    _n2.className = 'l-padding-4';
+    _n2.style.cssText = 'background: #CCC; border-radius: 6px;';
+    inst.d = _xvdomCreateDynamic(true, _n2, inst.c);
+
+    _n.appendChild(_n2);
+
     return _n;
   },
   u: function u(inst, pInst) {
@@ -2213,8 +2685,8 @@ function toggleSignIn() {
 }
 
 var App = function App(_ref) {
-  var user = _ref.props.user,
-      _ref$state = _ref.state,
+  var _ref$state = _ref.state,
+      user = _ref$state.user,
       page = _ref$state.page,
       id = _ref$state.id,
       tab = _ref$state.tab;
@@ -2225,7 +2697,7 @@ var App = function App(_ref) {
       a: toggleSignIn,
       c: user ? 'Sign out' : 'Sign in'
     },
-    c: !!page && !!id && {
+    c: user && !!page && !!id && {
       $s: _xvdomSpec2,
       a: user,
       b: page,
@@ -2246,25 +2718,7 @@ var stateFromHash = function stateFromHash(_ref2) {
       id = _hash$split2[1],
       tab = _hash$split2[2];
 
-  return { page: page, id: id, tab: tab };
-};
-
-App.state = {
-  onInit: function onInit(_ref3) {
-    var bindSend = _ref3.bindSend;
-
-    window.onhashchange = bindSend('handleHashChange');
-    return stateFromHash({});
-  },
-  onProps: stateFromHash,
-  handleHashChange: stateFromHash
-};
-
-var renderApp = function renderApp(user) {
-  return {
-    $s: _xvdomSpec4,
-    a: user
-  };
+  return _extends({}, state, { page: page, id: id, tab: tab });
 };
 
 firebase.initializeApp({
@@ -2275,30 +2729,47 @@ firebase.initializeApp({
   messagingSenderId: "115688293946"
 });
 
-document.body = xvdom.render(renderApp(User.current()));
+App.state = {
+  onInit: function onInit(_ref3) {
+    var bindSend = _ref3.bindSend;
 
-firebase.auth().onAuthStateChanged(function (authUser) {
-  if (!authUser) return xvdom.rerender(document.body, renderApp(null, null));
+    firebase.auth().onAuthStateChanged(function (authUser) {
+      if (!authUser) return bindSend('onUser')(authUser);
 
-  // Get or create user information
-  User.get(authUser.uid).catch(function () {
-    return User.save({
-      // Couldn't find existing user w/authId, so create a new User
-      id: authUser.uid,
-      displayName: authUser.displayName,
-      schools: {
-        _init: {
-          name: 'School #1',
-          terms: ['08-01-2016,11-31-2016', '11-31-2016,01-31-2017', '02-01-2017,05-31-2017']
-        }
-      }
+      // Get or create user information
+      User.get(authUser.uid).catch(function () {
+        return User.save({
+          // Couldn't find existing user w/authId, so create a new User
+          id: authUser.uid,
+          displayName: authUser.displayName,
+          schools: {
+            _init: {
+              name: 'School #1'
+            }
+          }
+        });
+      }).then(function (user) {
+        User.setCurrent(user.id);
+        var firstKey = Object.keys(user.schools)[0];
+        var hash = window.location.hash;
+        if (!hash || hash === '#') window.location.hash = '#schools/' + firstKey + '/school';
+        bindSend('onUser')(User.current());
+      });
     });
-  }).then(function (user) {
-    User.setCurrent(user.id);
-    var firstKey = Object.keys(user.schools)[0];
-    var hash = window.location.hash;
-    if (!hash || hash === '#') window.location.hash = '#schools/' + firstKey + '/school';
-  });
+
+    window.onhashchange = bindSend('handleHashChange');
+    return stateFromHash({ user: User.current() });
+  },
+  onUser: function onUser(_ref4, user) {
+    var state = _ref4.state;
+
+    return _extends({}, state, { user: user });
+  },
+  handleHashChange: stateFromHash
+};
+
+document.body = xvdom.render({
+  $s: _xvdomSpec4
 });
 
 }());
