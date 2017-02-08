@@ -6,6 +6,7 @@ const rollcallRef = id   => firebase.database().ref(`users/${User.getCurrentId()
 
 const generateReport = rollcalls => {
   const studentToTotals = {};
+
   Object.keys(rollcalls).forEach(key => {
     const rollcall = rollcalls[key];
     rollcall.forEach(([student, status]) => {
@@ -17,11 +18,9 @@ const generateReport = rollcalls => {
     })
   });
 
-  const report = [];
-  Object.keys(studentToTotals).sort(student => {
-   report.push([ student, studentToTotals[student] ]);
-  })
-  return report;
+  return Object.keys(studentToTotals).sort().map(student =>
+    [ student, studentToTotals[student] ]
+  )
 };
 
 export default {

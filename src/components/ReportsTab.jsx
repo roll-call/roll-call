@@ -32,14 +32,14 @@ const Report = dataComponent(ReportModel, 'query',
         <div className='List-item layout horizontal justified c-gray-dark'>
           <div className='flex'>Name</div>
           {STATUSES.map(status =>
-            <div className='flex t-center'>{status}</div>
+            <div key={status} className='flex t-center'>{status}</div>
           )}
         </div>
         {!report ? [] : report.map(([student, totals])=>
-          <div className='List-item layout horizontal justified'>
+          <div key={student} className='List-item layout horizontal justified'>
             <div className='flex'>{student}</div>
             {STATUSES.map(status =>
-              <div className='flex t-center'>{totals[status] || 0}</div>
+              <div key={status} className='flex t-center'>{totals[status] || 0}</div>
             )}
           </div>
         )}

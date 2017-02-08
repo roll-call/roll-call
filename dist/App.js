@@ -2184,6 +2184,7 @@ var rollcallRef$1 = function rollcallRef$1(id) {
 
 var generateReport = function generateReport(rollcalls) {
   var studentToTotals = {};
+
   Object.keys(rollcalls).forEach(function (key) {
     var rollcall = rollcalls[key];
     rollcall.forEach(function (_ref) {
@@ -2199,11 +2200,9 @@ var generateReport = function generateReport(rollcalls) {
     });
   });
 
-  var report = [];
-  Object.keys(studentToTotals).sort(function (student) {
-    report.push([student, studentToTotals[student]]);
+  return Object.keys(studentToTotals).sort().map(function (student) {
+    return [student, studentToTotals[student]];
   });
-  return report;
 };
 
 var ReportModel = {
@@ -2487,7 +2486,8 @@ var Report = dataComponent(ReportModel, 'query', function (_ref4) {
     a: STATUSES.map(function (status) {
       return {
         $s: _xvdomSpec2$6,
-        a: status
+        a: status,
+        key: status
       };
     }),
     c: !report ? [] : report.map(function (_ref5) {
@@ -2501,9 +2501,11 @@ var Report = dataComponent(ReportModel, 'query', function (_ref4) {
         c: STATUSES.map(function (status) {
           return {
             $s: _xvdomSpec3$5,
-            a: totals[status] || 0
+            a: totals[status] || 0,
+            key: status
           };
-        })
+        }),
+        key: student
       };
     })
   };
