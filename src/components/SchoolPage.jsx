@@ -1,23 +1,25 @@
 import './SchoolPage.css';
 
-import xvdom      from 'xvdom';
+import xvdom         from 'xvdom';
 import dataComponent from '../helpers/dataComponent.js';
-import SchoolModel from '../models/School.js';
-import Icon       from './common/Icon.jsx';
-import Tabs       from './common/Tabs.jsx';
-import AppToolbar from './AppToolbar.jsx';
-import StudentsTab from './StudentsTab.jsx';
-import SeatingTab from './SeatingTab.jsx';
-import RollcallTab from './RollcallTab.jsx';
+import SchoolModel   from '../models/School.js';
+import Icon          from './common/Icon.jsx';
+import Tabs          from './common/Tabs.jsx';
+import AppToolbar    from './AppToolbar.jsx';
+import StudentsTab   from './StudentsTab.jsx';
+import SeatingTab    from './SeatingTab.jsx';
+import RollcallTab   from './RollcallTab.jsx';
+import ReportsTab    from './ReportsTab.jsx';
 
 const TABS = {
   school:   { title: 'School' },
   students: { title: 'Students' },
   seating:  { title: 'Seating' },
-  rollcall: { title: 'Roll Call' }
+  rollcall: { title: 'Roll Call' },
+  reports:  { title: 'Reports' }
 };
 
-const SchoolCreate =  ({props: { user, page, id, tab }}) => {
+const SchoolCreate =  () => {
   return (
     <div>
       <AppToolbar
@@ -34,7 +36,7 @@ const SchoolCreate =  ({props: { user, page, id, tab }}) => {
 };
 
 const EditSchoolName = ({props: { id }, state, bindSend}) => (
-  <input className='SchoolPage-input' value={state} oninput={bindSend('updateName')} />
+  <input className='SchoolPage-input' oninput={bindSend('updateName')}  value={state} />
 )
 
 const onInit = ({props}) => props.school && props.school.name
@@ -48,8 +50,7 @@ EditSchoolName.state = {
   }
 };
 
-const SchoolTab = dataComponent(SchoolModel, 
-  'get',
+const SchoolTab = dataComponent(SchoolModel, 'get',
   ({ props: { id }, state }) => (
     <div className='Card'>
       <div className='Card-title'>
@@ -59,42 +60,39 @@ const SchoolTab = dataComponent(SchoolModel,
   )
 );
 
-const renderTab = (id, tab) => (
-  tab === 'school'   ? <SchoolTab id={id} />
-: tab === 'students' ? <StudentsTab id={id} />
-: tab === 'seating'  ? <SeatingTab id={id} />
-: tab === 'rollcall' ? <RollcallTab id={id} />
-: null
-);
-
-const School =  dataComponent(
-  SchoolModel,
-  'get',
-  ({ props: { user, page, id, tab }, state }) => {
-    const school = state || {};
-    return (
-      <div>
-        <AppToolbar
-          left={
-            <Icon
-              className='c-white l-padding-h4'
-              name='three-bars'
-              size='small'
-            />
-          }
-          secondary={
-            <Tabs hrefPrefix={`#schools/${id}/`} selected={tab} tabs={TABS} />
-          }
-          title={school.name}
-        />
-        {renderTab(id, tab)}
-      </div>
-    )
+const renderTab = (id, tab) => {
+  switch(tab) {
+  case 'school':   return <SchoolTab   id={id} />;
+  case 'students': return <StudentsTab id={id} />;
+  case 'seating':  return <SeatingTab  id={id} />;
+  case 'rollcall': return <RollcallTab id={id} />;
+  case 'reports':  return <ReportsTab  id={id} />;
   }
+};
+
+const School =  dataComponent(SchoolModel, 'get',
+  ({ props: { id, tab }, state: school }) => (
+    <div>
+      <AppToolbar
+        left={
+          <Icon
+            className='c-white l-padding-h4'
+            name='three-bars'
+            size='small'
+          />
+        }
+        secondary={
+          <Tabs hrefPrefix={`#schools/${id}/`} selected={tab} tabs={TABS} />
+        }
+        title={school ? school.name : ''}
+      />
+      {renderTab(id, tab)}
+    </div>
+  )
 );
 
 export default ({ user, page, id, tab }) => (
   id === 'new'
     ? <SchoolCreate />
-    : <School user={user} page={page} id={id} tab={tab} />
+    : <School id={id} page={page} tab={tab} user={user} />
 )

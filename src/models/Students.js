@@ -4,7 +4,7 @@ const studentsRef = (id = '') => firebase.database().ref(`users/${User.getCurren
 
 export default {
   query: ({ id }) => {
-    const userId = User.getCurrentId;
+    const userId = User.getCurrentId();
     if(!userId) {
       console.log('No user!');
       return Promise.resolve([]);

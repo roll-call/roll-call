@@ -14,7 +14,7 @@ const defaultSeating = students => {
 
 const Seating = {
   query: ({ id }) => {
-    const userId = User.getCurrentId;
+    const userId = User.getCurrentId();
     if(!userId) {
       console.log('No user!');
       return Promise.resolve([]);

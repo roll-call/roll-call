@@ -32,16 +32,16 @@ function toggleSignIn() {
     .catch(error => console.error(error));
 }
 
-const App = ({ state: { user, page, id, tab } }) => (
+const App = ({ state: { user, page, id, tab, checkedLogin } }) => (
   <body className='App'>
-    {!user &&
+    {!user && checkedLogin &&
       <div style='position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;' className='layout horizontal center-center'>
         <a onclick={toggleSignIn} className='l-padding-4' style='background: #CCC; border-radius: 6px;'>
           {user ? 'Sign out' : 'Sign in'}
         </a>
       </div>
     }
-    {user && !!page && !!id &&
+    {user && page && id &&
       <SchoolPage user={user} page={page} id={id} tab={tab} />
     }
   </body>
@@ -77,7 +77,7 @@ App.state = {
               _init: {
                 name: 'School #1'
               }
-            },
+            }
           })
         )
         .then(user => {
@@ -93,7 +93,7 @@ App.state = {
     return stateFromHash({ user: User.current() });
   },
   onUser: ({ state }, user) => {
-    return { ...state, user };
+    return { ...state, user, checkedLogin: true };
   },
   handleHashChange: stateFromHash
 }

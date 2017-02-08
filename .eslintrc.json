@@ -5,7 +5,9 @@
         "es6": true,
         "node": true
     },
+    "plugins": [ "react" ],
     "parserOptions": {
+        "ecmaVersion": 6,
         "ecmaFeatures": {
             "jsx": true
         },
@@ -23,6 +25,19 @@
         "no-unreachable": "warn",
         "no-unused-vars": "warn",
         "constructor-super": "warn",
-        "valid-typeof": "warn"
+        "valid-typeof": "warn",
+        "react/jsx-uses-vars"           : 2,
+        "react/jsx-space-before-closing": [2, "always"],
+        "react/jsx-sort-props": 2,
+        "react/jsx-pascal-case": 2,
+        "react/jsx-no-undef": 2,
+        "react/jsx-no-duplicate-props": 2,
+        "react/jsx-no-bind": [2, {"allowBind": false, "allowArrowFunctions": false}],
+        "react/jsx-indent": [2, 2],
+        "react/jsx-indent-props": [2, 2],
+        "react/jsx-equals-spacing": [2, "never"],
+        "react/jsx-curly-spacing": [2, "never"],
+        "react/jsx-boolean-value": [2, "never"],
+        "react/jsx-key": 2
     }
 }

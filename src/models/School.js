@@ -4,7 +4,7 @@ const schoolsRef = (id = '') => firebase.database().ref(`users/${User.getCurrent
 
 export default {
   query: () => {
-    const userId = User.getCurrentId;
+    const userId = User.getCurrentId();
     if(!userId) {
       console.log('No user!');
       return;
