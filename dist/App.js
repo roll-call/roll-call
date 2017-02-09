@@ -2876,7 +2876,7 @@ var TABS = {
   school: { title: 'School' },
   students: { title: 'Students' },
   seating: { title: 'Seating' },
-  rollcall: { title: 'Roll Call' },
+  rollcall: { title: 'Attendance' },
   reports: { title: 'Reports' }
 };
 
