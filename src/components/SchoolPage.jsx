@@ -10,6 +10,7 @@ import StudentsTab   from './StudentsTab.jsx';
 import SeatingTab    from './SeatingTab.jsx';
 import RollcallTab   from './RollcallTab.jsx';
 import ReportsTab    from './ReportsTab.jsx';
+import App           from './App.jsx';
 
 const TABS = {
   school:   { title: 'School' },
@@ -17,22 +18,6 @@ const TABS = {
   seating:  { title: 'Seating' },
   rollcall: { title: 'Attendance' },
   reports:  { title: 'Reports' }
-};
-
-const SchoolCreate =  () => {
-  return (
-    <div>
-      <AppToolbar
-        left={
-          <Icon
-            className='c-white l-padding-h4'
-            name='three-bars'
-            size='small'
-          />
-        }
-      />
-    </div>
-  );
 };
 
 const EditSchoolName = ({props: { id }, state, bindSend}) => (
@@ -70,17 +55,10 @@ const renderTab = (id, tab) => {
   }
 };
 
-const School =  dataComponent(SchoolModel, 'get',
+export default dataComponent(SchoolModel, 'get',
   ({ props: { id, tab }, state: school }) => (
     <div>
       <AppToolbar
-        left={
-          <Icon
-            className='c-white l-padding-h4'
-            name='three-bars'
-            size='small'
-          />
-        }
         secondary={
           <Tabs hrefPrefix={`#schools/${id}/`} selected={tab} tabs={TABS} />
         }
@@ -90,9 +68,3 @@ const School =  dataComponent(SchoolModel, 'get',
     </div>
   )
 );
-
-export default ({ user, page, id, tab }) => (
-  id === 'new'
-    ? <SchoolCreate />
-    : <School id={id} page={page} tab={tab} user={user} />
-)

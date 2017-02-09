@@ -14,8 +14,10 @@ import xvdom      from 'xvdom';
 import Icon       from './common/Icon.jsx';
 import Tabs       from './common/Tabs.jsx';
 import User       from '../models/User';
+import SchoolModel from '../models/School';
 import SchoolPage from './SchoolPage.jsx';
 import AppToolbar from './AppToolbar.jsx';
+import AppDrawer from './AppDrawer.jsx';
 
 import '../helpers/globalLogger';
 
@@ -32,7 +34,45 @@ function toggleSignIn() {
     .catch(error => console.error(error));
 }
 
-const App = ({ state: { user, page, id, tab, checkedLogin } }) => (
+const NewSchool = ({ props: { onCancel },  state: { name, canAdd }, bindSend }) => (
+  <div>
+    <div className="AssignSeat layout horizontal center-center">
+      <div className="NewSchool-dialog Card l-padding-4">
+        <input
+          className='SchoolPage-input'
+          oninput={bindSend('updateName')}
+          placeholder="School's Name"
+          value={name}
+        />
+        <div className='l-margin-t4 l-padding-t4 t-right'>
+          {canAdd &&
+            <a
+              className='l-margin-h4'
+              onclick={() => {
+                SchoolModel.create(name).then(schoolId => {
+                  window.location.hash = `#schools/${schoolId}/school`;
+                })
+              }}
+            >
+              Add
+            </a>
+          }
+          <a className='l-margin-h4' onclick={onCancel} >Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+NewSchool.state = {
+  onInit: () => ({ name: '' }),
+  updateName: (component, e) => {
+    const name = e.target.value;
+    return { name, canAdd: !!name };
+  }
+}
+
+const App = ({ state: { drawerEnabled, user, page, id, tab, checkedLogin, showAddSchool }, bindSend }) => (
   <body className='App'>
     {!user && checkedLogin &&
       <div style='position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;' className='layout horizontal center-center'>
@@ -41,16 +81,40 @@ const App = ({ state: { user, page, id, tab, checkedLogin } }) => (
         </a>
       </div>
     }
-    {user && page && id &&
+    {user && page && id && (
       <SchoolPage user={user} page={page} id={id} tab={tab} />
+    )}
+    <div
+      className={`App-backdrop fixed ${(drawerEnabled || showAddSchool) ? 'is-enabled' : ''}`}
+      onclick={bindSend('disableDrawer')}
+    />
+    <AppDrawer user={user} enabled={drawerEnabled} onNewSchool={bindSend('onNewSchool')} />
+    {user && showAddSchool &&
+      <NewSchool onCancel={bindSend('closeNewSchool')} />
     }
   </body>
 );
 
 const stateFromHash = ({ state }) => {
   const hash = window.location.hash.slice(1);
-  const [page, id, tab] = hash.split('/');
-  return {...state, page, id, tab};
+  if(!hash) {
+    User.get(User.getCurrentId()).then(user => {
+      const firstKey = Object.keys(user.schools)[0];
+      const hash = window.location.hash;
+      
+      window.location.hash = `#schools/${firstKey}/school`;
+    })
+    return state || {};
+  }
+  else {
+    const [page, id, tab] = hash.split('/');
+    return {
+      ...state,
+      showAddSchool: false,
+      drawerEnabled: false,
+      page, id, tab
+    };
+  }
 };
 
 firebase.initializeApp({
@@ -63,6 +127,8 @@ firebase.initializeApp({
 
 App.state = {
   onInit: ({ bindSend }) => {
+    App.showDrawer = bindSend('enableDrawer');
+
     firebase.auth().onAuthStateChanged(authUser => {
       if(!authUser) return bindSend('onUser')(authUser);
 
@@ -92,6 +158,10 @@ App.state = {
     window.onhashchange = bindSend('handleHashChange');
     return stateFromHash({ user: User.current() });
   },
+  enableDrawer: ({ state }) => ({ ...state, drawerEnabled: true }),
+  disableDrawer: ({ state }) => ({ ...state, drawerEnabled: false }),
+  onNewSchool: ({ state }) => ({ ...state, showAddSchool: true, drawerEnabled: false }),
+  closeNewSchool: ({ state }) => ({ ...state, showAddSchool: false }),
   onUser: ({ state }, user) => {
     return { ...state, user, checkedLogin: true };
   },
@@ -99,3 +169,5 @@ App.state = {
 }
 
 document.body = xvdom.render(<App />);
+
+export default App;

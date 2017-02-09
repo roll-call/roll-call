@@ -1,86 +1,59 @@
 import './AppDrawer.css';
 import './common/List.css';
-import xvdom      from 'xvdom/src/index';
-import List       from './common/List.jsx';
-import Icon       from './common/Icon.jsx';
-import Avatar     from './common/Avatar.jsx';
-import SourceName from './SourceName.jsx';
-import compare    from '../helpers/compare';
+import xvdom         from 'xvdom/src/index';
+import List          from './common/List.jsx';
+import dataComponent from '../helpers/dataComponent.js';
+import SchoolModel   from '../models/School.js';
 
-const userAvatarUrl = username => `https://github.com/${username}.png?size=32`
-const sort = (a, b) => compare(a.sortKey, b.sortKey);
-const renderData = ({id}) => {
-  const [owner, name] = id.split('/');
-  return {
-    id,
-    avatarUrl: userAvatarUrl(owner),
-    sortKey: (name || owner).toLowerCase()
-  };
+const item = ([ id, {name} ])=> ({
+  href: `#schools/${id}/school`,
+  key:  name,
+  text: <div>{name}</div>,
+  icon: 'bookmark'
+});
+
+const strcmp = (a, b)=> {
+  const at = a.toLowerCase();
+  const bt = b.toLowerCase();
+  return (
+      at < bt ? -1
+    : at > bt ?  1
+    : 0
+  );
 }
-const sortSources = sources => sources.map(renderData).sort(sort)
 
-const item = ({id, avatarUrl}) => ({
-  href: `#github/${id}`,
-  avatarUrl: avatarUrl,
-  key:  id,
-  text: <SourceName displayName={id} />
-})
-
-const logout = () => {
-  window.localStorage.clear();
-  window.location.reload();
-}
+const transform = schoolsObj => (
+  Object.keys(schoolsObj)
+    .sort((a, b) => strcmp(schoolsObj[a].name, schoolsObj[b].name))
+    .map(id => [id, schoolsObj[id]])
+)
+const Schools = dataComponent(SchoolModel, 'query',
+  ({ state }) => (
+    <List
+      item={item}
+      itemClass='List-item--noDivider'
+      list={state ? state : []}
+      transform={transform}
+    />
+  )
+)
 
 // Lazily render drawer contents the first time the drawer is enabled.
 // Prevent un-rendering contents when disabled.
 let lazyRenderContents = false;
-export default ({user, enabled, onLogin}) => {
+export default ({user, enabled, onNewSchool}) => {
   lazyRenderContents  = enabled || lazyRenderContents;
   const enabledClass  = enabled            ? 'is-enabled'  : '';
   const renderedClass = lazyRenderContents ? 'is-rendered' : '';
   return (
     <div className={`AppDrawer fixed scroll ${enabledClass} ${renderedClass}`}>
-      {lazyRenderContents && (
-        user ? (
-          <div>
-            <div className='List-item List-item--noDivider layout horizontal center'>
-              <Avatar avatarUrl={userAvatarUrl(user.githubUsername)} />
-              <span className='l-margin-l4' textContent={user.githubUsername} />
-            </div>
-            <div className='List-item List-item--header'>
-              REPOSITORIES
-            </div>
-            <List
-              item={item}
-              itemClass='List-item--noDivider'
-              list={user.sources.github.repos}
-              transform={sortSources}
-            />
-            <div className='List-item List-item--header'>
-              USERS / ORGS
-            </div>
-            <List
-              item={item}
-              itemClass='List-item--noDivider'
-              list={user.sources.github.users}
-              transform={sortSources}
-            />
-            <a
-              className='List-item List-item--header l-padding-b4'
-              onclick={logout}
-            >
-              LOGOUT
-            </a>
-          </div>
-        ) : (
-          <div
-            className='List-item List-item--noDivider layout horizontal center'
-            onclick={onLogin}
-          >
-            <Icon name='mark-github' />
-            <span className='l-margin-l4' textContent='Login with GitHub' />
-          </div>
-        )
+      {enabled && user && (
+        <div>
+          <a className='List-item layout horizontal center' onclick={onNewSchool}>
+            <span className='t-center' textContent='Add a School' />
+          </a>
+          <Schools />
+        </div>
       )}
     </div>
   )

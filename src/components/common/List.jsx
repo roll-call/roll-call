@@ -1,13 +1,17 @@
 import xvdom  from 'xvdom/src/index';
+import Icon   from './Icon.jsx';
 
 const identity = o => o;
 
 function renderItem(el){
   const { item, context, itemClass } = this;
-  const { href, key, text } = item(el, context);
+  const { href, key, icon, text } = item(el, context);
   return (
     <a className={`List-item layout horizontal center t-normal ${itemClass || ''}`} href={href} key={key}>
-      {text}
+      {icon &&
+        <Icon name={icon} />
+      }
+      <div className='l-margin-l3'>{text}</div>
     </a>
   );
 }

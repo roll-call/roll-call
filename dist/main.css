@@ -582,6 +582,9 @@ pre {
 .t-center {
   text-align: center !important;
 }
+.t-right {
+  text-align: right !important;
+}
 .Card {
   background: #FFF;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -657,51 +660,8 @@ pre {
   opacity: 0.75;
 }
 
-.OutfitRow.is-selected {
-  background: #e0f1ff !important;
-}
-
-.OutfitRow {
-  width: 100%;
-}
-
-.OutfitRow-items {
-  width: 100%;
-  padding: 20px 0;
-}
-
-.OutfitRow-item {
-  height: 150px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100%;
-  position: relative;
-  margin-left: 0;
-  transition: margin 0.1s ease-out, background-size 0.1s ease-out;
-}
-
-.OutfitRow-item.is-selected {
-  background-size: 90%;
-}
-.OutfitRow.is-selected .OutfitRow-item + .OutfitRow-item {
-  margin-left: 6px;
-}
-
-.OutfitRow-item:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  border: 0px solid #63b8ff;
-  border-width: 0px;
-  transition: border-width 0.1s ease-out;
-}
-
-.OutfitRow-item.is-selected:before {
-  border-width: 8px;
+.NewSchool-dialog {
+  width: calc(100% - 100px);
 }.Icon {
   font-size: 32px;
   min-width: 32px;
@@ -930,4 +890,26 @@ pre {
 .is-no-instrument {
   background: #F88;
   border-color: #D55;
+}.AppDrawer {
+  width: 0;
+  height: 0;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0, 0.75);
+  /* Extra 1% to hide the box shadow */
+  transform: translate3d(-101%, 0, 0);
+  -webkit-transform: translate3d(-101%, 0, 0);
+  transition: transform 200ms ease-out;
+  transition: -webkit-transform 200ms ease-out;
+  z-index: 2;
+}
+
+.AppDrawer.is-rendered {
+  height: auto;
+  width: 300px;
+  max-width: 75vw;
+}
+
+.AppDrawer.is-enabled {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }

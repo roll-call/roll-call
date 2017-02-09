@@ -18,9 +18,11 @@ export default {
     });
   },
 
-  create: schoolName => {
+  create: name => {
     const newSchool = schoolsRef().push();
-    newSchool.set({ name: schoolName });
+    return newSchool.set({ name: name }).then(() =>
+      newSchool.getKey()
+    );
   },
 
   // TODO: Move App.jsx creating/initializing a new user into here create: => {}

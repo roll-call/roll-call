@@ -7,7 +7,7 @@ const rollcallRef = id   => firebase.database().ref(`users/${User.getCurrentId()
 const generateReport = rollcalls => {
   const studentToTotals = {};
 
-  Object.keys(rollcalls).forEach(key => {
+  Object.keys(rollcalls || {}).forEach(key => {
     const rollcall = rollcalls[key];
     rollcall.forEach(([student, status]) => {
       let totals = studentToTotals[student];
