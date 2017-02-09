@@ -13,8 +13,11 @@ const AssignSeat = dataComponent(
       <div className="AssignSeat-backdrop" onclick={onClose} />
       {state &&
         <div className="AssignSeat-card Card">
+          <a className="List-item c-gray-dark" onclick={() => { onAssign({ seatIndex, student: 'EMPTY' }) }}>
+            EMPTY
+          </a>
           {state.sort().map(student =>
-            <a key={student} className="List-item" onclick={() => { onAssign({ seatIndex, student }) }} >
+            <a key={student} className="List-item" onclick={() => { onAssign({ seatIndex, student }) }}>
               {student}
             </a>
           )}
@@ -26,7 +29,14 @@ const AssignSeat = dataComponent(
 
 const SeatingRow = ({ props: { id, row, onAdd, onRemove, onAssign }, state: {seatIndex}, bindSend }) => (
   <div>
-    {seatIndex != null && <AssignSeat id={id} seatIndex={seatIndex} onAssign={onAssign} onClose={bindSend('onClose')} />}
+    {seatIndex != null &&
+      <AssignSeat
+        id={id}
+        onAssign={onAssign}
+        onClose={bindSend('onClose')}
+        seatIndex={seatIndex}
+      />
+    }
     <div className='SeatingRow layout horizontal'>
       <div className='SeatingRow-controls layout vertical around-justified'>
         <a className='SeatingRow-controls-control' onclick={onAdd}>+</a>
@@ -34,10 +44,10 @@ const SeatingRow = ({ props: { id, row, onAdd, onRemove, onAssign }, state: {sea
       </div>
       {row.map((seat, seatIndex) => (
         <a
-          key={seatIndex}
           className={`SeatingRow-seat ${seat === 'EMPTY' ? 'SeatingRow-seat--empty' : ''}`}
-          seatindex={seatIndex}
+          key={seatIndex}
           onclick={bindSend('openAssignSeat')}
+          seatindex={seatIndex}
         >
           {seat}
         </a>
@@ -66,18 +76,25 @@ export default dataComponent(
     <div className='l-padding-t4'>
       {!state ? [] : state.map((row, rowNum) => (
         <SeatingRow
-          key={row.join('--')}
           id={id}
+          key={row.join('--')}
           row={row}
           rowNum={rowNum}
           onAssign={({seatIndex, student}) => {
-            const curRow = state.find(row => row.indexOf(student) !== -1);
-            const curSeatIndex = curRow && curRow.indexOf(student);
+            if(student !== 'EMPTY'){
+              // Find where the student is currently sitting
+              const curRow = state.find(row => row.indexOf(student) !== -1);
+              const curSeatIndex = curRow && curRow.indexOf(student);
 
-            if(curRow === rowNum && curSeatIndex === seatIndex) return;
+              // If the student hasn't been assigned seating yet
+              // OR
+              // Is is being assigned to the same seat
+              if(curRow === rowNum && curSeatIndex === seatIndex) return;
 
-            const swapStudent = row[seatIndex];
-            if(curRow) curRow[curSeatIndex] = swapStudent;
+              // Swap the student current sitting in the seat
+              const swapStudent = row[seatIndex];
+              if(curRow) curRow[curSeatIndex] = swapStudent;
+            }
             row[seatIndex] = student;
 
             SeatingModel.update(id, state).then(bindSend('refresh'));

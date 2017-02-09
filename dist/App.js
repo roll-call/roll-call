@@ -1489,8 +1489,8 @@ var _xvdomSpec5$2 = {
 
     inst.b = _n;
     _n.className = inst.a;
-    _n.seatindex = inst.c;
-    _n.onclick = inst.d;
+    _n.onclick = inst.c;
+    _n.seatindex = inst.d;
     inst.f = _xvdomCreateDynamic$5(true, _n, inst.e);
     return _n;
   },
@@ -1506,14 +1506,14 @@ var _xvdomSpec5$2 = {
     v = inst.c;
 
     if (v !== pInst.c) {
-      pInst.b.seatindex = v;
+      pInst.b.onclick = v;
       pInst.c = v;
     }
 
     v = inst.d;
 
     if (v !== pInst.d) {
-      pInst.b.onclick = v;
+      pInst.b.seatindex = v;
       pInst.d = v;
     }
 
@@ -1527,9 +1527,9 @@ var _xvdomSpec4$3 = {
   c: function c(inst) {
     var _n = (inst.e = _xvdomCreateComponent$4(AssignSeat, AssignSeat.state, {
       id: inst.a,
-      seatIndex: inst.b,
-      onAssign: inst.c,
-      onClose: inst.d
+      onAssign: inst.b,
+      onClose: inst.c,
+      seatIndex: inst.d
     }, inst)).$n;
 
     return _n;
@@ -1540,9 +1540,9 @@ var _xvdomSpec4$3 = {
     if (inst.c !== pInst.c || inst.b !== pInst.b || inst.a !== pInst.a || inst.d !== pInst.d) {
       pInst.e = _xvdomUpdateComponent$4(AssignSeat, AssignSeat.state, {
         id: pInst.a = inst.a,
-        seatIndex: pInst.b = inst.b,
-        onAssign: pInst.c = inst.c,
-        onClose: pInst.d = inst.d
+        onAssign: pInst.b = inst.b,
+        onClose: pInst.c = inst.c,
+        seatIndex: pInst.d = inst.d
       }, pInst.e);
     }
   },
@@ -1581,17 +1581,33 @@ var _xvdomSpec3$3 = {
 };
 var _xvdomSpec2$4 = {
   c: function c(inst) {
-    var _n = _xvdomEl$6('div');
+    var _n = _xvdomEl$6('div'),
+        _n2;
 
     _n.className = 'AssignSeat-card Card';
-    inst.b = _xvdomCreateDynamic$5(true, _n, inst.a);
+    _n2 = _xvdomEl$6('a');
+    _n2.className = 'List-item c-gray-dark';
+    inst.b = _n2;
+    _n2.onclick = inst.a;
+
+    _n2.appendChild(document.createTextNode(('EMPTY') || ''));
+
+    _n.appendChild(_n2);
+
+    inst.d = _xvdomCreateDynamic$5(false, _n, inst.c);
     return _n;
   },
   u: function u(inst, pInst) {
     var v;
+    v = inst.a;
 
-    if (inst.a !== pInst.a) {
-      pInst.b = _xvdomUpdateDynamic$5(true, pInst.a, pInst.a = inst.a, pInst.b);
+    if (v !== pInst.a) {
+      pInst.b.onclick = v;
+      pInst.a = v;
+    }
+
+    if (inst.c !== pInst.c) {
+      pInst.d = _xvdomUpdateDynamic$5(false, pInst.c, pInst.c = inst.c, pInst.d);
     }
   },
   r: xvdom.DEADPOOL
@@ -1632,7 +1648,10 @@ var AssignSeat = dataComponent(Students, 'query', function (_ref) {
     a: onClose,
     c: state && {
       $s: _xvdomSpec2$4,
-      a: state.sort().map(function (student) {
+      a: function a() {
+        onAssign({ seatIndex: seatIndex, student: 'EMPTY' });
+      },
+      c: state.sort().map(function (student) {
         return {
           $s: _xvdomSpec$6,
           a: function a() {
@@ -1660,9 +1679,9 @@ var SeatingRow = function SeatingRow(_ref2) {
     a: seatIndex != null && {
       $s: _xvdomSpec4$3,
       a: id,
-      b: seatIndex,
-      c: onAssign,
-      d: bindSend('onClose')
+      b: onAssign,
+      c: bindSend('onClose'),
+      d: seatIndex
     },
     c: onAdd,
     e: onRemove,
@@ -1670,8 +1689,8 @@ var SeatingRow = function SeatingRow(_ref2) {
       return {
         $s: _xvdomSpec5$2,
         a: 'SeatingRow-seat ' + (seat === 'EMPTY' ? 'SeatingRow-seat--empty' : ''),
-        c: seatIndex,
-        d: bindSend('openAssignSeat'),
+        c: bindSend('openAssignSeat'),
+        d: seatIndex,
         e: seat,
         key: seatIndex
       };
@@ -1716,15 +1735,22 @@ var SeatingTab = dataComponent(Seating, 'query', function (_ref4) {
           var seatIndex = _ref5.seatIndex,
               student = _ref5.student;
 
-          var curRow = state.find(function (row) {
-            return row.indexOf(student) !== -1;
-          });
-          var curSeatIndex = curRow && curRow.indexOf(student);
+          if (student !== 'EMPTY') {
+            // Find where the student is currently sitting
+            var curRow = state.find(function (row) {
+              return row.indexOf(student) !== -1;
+            });
+            var curSeatIndex = curRow && curRow.indexOf(student);
 
-          if (curRow === rowNum && curSeatIndex === seatIndex) return;
+            // If the student hasn't been assigned seating yet
+            // OR
+            // Is is being assigned to the same seat
+            if (curRow === rowNum && curSeatIndex === seatIndex) return;
 
-          var swapStudent = row[seatIndex];
-          if (curRow) curRow[curSeatIndex] = swapStudent;
+            // Swap the student current sitting in the seat
+            var swapStudent = row[seatIndex];
+            if (curRow) curRow[curSeatIndex] = swapStudent;
+          }
           row[seatIndex] = student;
 
           Seating.update(id, state).then(bindSend('refresh'));
